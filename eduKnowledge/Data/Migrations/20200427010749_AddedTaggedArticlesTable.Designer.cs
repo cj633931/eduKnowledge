@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eduKnowledge.Data;
 
 namespace eduKnowledge.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200427010749_AddedTaggedArticlesTable")]
+    partial class AddedTaggedArticlesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,7 +244,7 @@ namespace eduKnowledge.Data.Migrations
                     b.Property<DateTime>("DateDrafted")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DatePublished")
+                    b.Property<DateTime>("DatePublished")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("LastEdited")
@@ -310,11 +312,16 @@ namespace eduKnowledge.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ArticleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
 
                     b.ToTable("Tags");
                 });
@@ -419,6 +426,15 @@ namespace eduKnowledge.Data.Migrations
                     b.HasOne("eduKnowledge.Models.ApplicationUser", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId");
+                });
+
+            modelBuilder.Entity("eduKnowledge.Models.Tag", b =>
+                {
+                    b.HasOne("eduKnowledge.Data.Article", "Article")
+                        .WithMany()
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

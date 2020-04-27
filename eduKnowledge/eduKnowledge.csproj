@@ -8,9 +8,13 @@
   <ItemGroup>
     <Compile Remove="Data\Migrations\20200426211637_AddedArticlesCommentsTagsTables.cs" />
     <Compile Remove="Data\Migrations\20200426211637_AddedArticlesCommentsTagsTables.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200426234842_AddedTaggedArticlesTable.cs" />
+    <Compile Remove="Data\Migrations\20200426234842_AddedTaggedArticlesTable.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.3" />

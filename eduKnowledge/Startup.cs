@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using eduKnowledge.Contracts;
 using eduKnowledge.Repository;
+using AutoMapper;
+using eduKnowledge.Mappings;
 
 namespace eduKnowledge
 {
@@ -37,6 +39,9 @@ namespace eduKnowledge
             services.AddScoped<IArticleRepository, ArticleRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
+
+            // Mapper is going to map all of our data classes to our view models.
+            services.AddAutoMapper(typeof(Maps));
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();

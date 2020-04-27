@@ -19,7 +19,7 @@ namespace eduKnowledge.Data
         public string AuthorId { get; set; }
         [Required]
         public DateTime DateDrafted { get; set; }
-        public DateTime DatePublished { get; set; }
+        public DateTime? DatePublished { get; set; }
         [Required]
         public DateTime LastEdited { get; set; }
         [Required]
