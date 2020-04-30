@@ -10,6 +10,8 @@ namespace eduKnowledge.Mappings
 {
     public class Maps : Profile
     {
+        // AutoMapper is a neat little API that I implemented into this project.
+        // It'll automatically map the specific models to their view models and viceversa.
         public Maps()
         {
             CreateMap<ApplicationUser, ApplicationUserViewModel>().ReverseMap();
