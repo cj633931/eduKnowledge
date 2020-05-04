@@ -28,6 +28,12 @@ namespace eduKnowledge.Repository
             return Save();
         }
 
+        public bool Exists(int id)
+        {
+            var exists = _db.TaggedArticles.Any(q => q.Id == id);
+            return exists;
+        }
+
         public ICollection<TaggedArticle> FindAll()
         {
             return _db.TaggedArticles.ToList();

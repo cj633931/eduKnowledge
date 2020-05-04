@@ -29,6 +29,12 @@ namespace eduKnowledge.Repository
             return Save();
         }
 
+        public bool Exists(int id)
+        {
+            var exists = _db.Comments.Any(q => q.Id == id);
+            return exists;
+        }
+
         public ICollection<Comment> FindAll()
         {
             return _db.Comments.ToList();

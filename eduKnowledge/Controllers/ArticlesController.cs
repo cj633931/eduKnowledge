@@ -6,7 +6,9 @@ using AutoMapper;
 using eduKnowledge.Contracts;
 using eduKnowledge.Data;
 using eduKnowledge.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eduKnowledge.Controllers
@@ -15,11 +17,15 @@ namespace eduKnowledge.Controllers
     {
         private readonly IArticleRepository _repo;
         private readonly IMapper _mapper;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ArticlesController(IArticleRepository repo, IMapper mapper)
+        public ArticlesController(IArticleRepository repo,
+                                  IMapper mapper,
+                                  UserManager<IdentityUser> userManager)
         {
             _repo = repo;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         // GET: Articles
@@ -33,75 +39,142 @@ namespace eduKnowledge.Controllers
         // GET: Articles/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            if (!_repo.Exists(id))
+            {
+                return NotFound();
+            }
+            var article = _repo.FindById(id);
+            var model = _mapper.Map<ArticleViewModel>(article);
+            return View(model);
         }
 
         // GET: Articles/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: Articles/Create
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> CreateAsync(ArticleViewModel model)
         {
             try
             {
-                // TODO: Add insert logic here
+                var user = await _userManager.GetUserAsync(User);
+                var today = DateTime.Now;
+                var content = model.Content;
+
+                var articleModel = new ArticleViewModel
+                {
+                    Title = model.Title,
+                    AuthorId = user.Id,
+                    DateDrafted = today,
+                    DatePublished = null,
+                    LastEdited = today,
+                    Content = content
+                };
+
+                var article = _mapper.Map<Article>(articleModel);
+                var success = _repo.Create(article);
+                if (!success)
+                {
+                    ModelState.AddModelError("", "Something went wrong.");
+                    return View(model);
+                }
 
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                ModelState.AddModelError("", "Something went wrong.");
+                return View(model);
             }
         }
 
         // GET: Articles/Edit/5
+        [Authorize]
         public ActionResult Edit(int id)
         {
-            return View();
+            if (!_repo.Exists(id)) // First have to figure out if the request exists
+            {
+                return NotFound();
+            }
+            var article = _repo.FindById(id);
+            var model = _mapper.Map<ArticleViewModel>(article);
+            return View(model);
         }
 
         // POST: Articles/Edit/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Article model)
         {
             try
             {
                 // TODO: Add update logic here
-
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+                var article = _mapper.Map<Article>(model);
+                article.LastEdited = DateTime.Now;
+                var success = _repo.Update(article);
+                if (!success)
+                {
+                    ModelState.AddModelError("", "Something went wrong.");
+                    return View(model);
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                ModelState.AddModelError("", "Something went wrong.");
+                return View(model);
             }
         }
 
         // GET: Articles/Delete/5
+        [Authorize(Roles = "Administrator")]
         public ActionResult Delete(int id)
         {
-            return View();
+            if (!_repo.Exists(id))
+            {
+                return NotFound();
+            }
+            var article = _repo.FindById(id);
+            var model = _mapper.Map<ArticleViewModel>(article);
+            return View(model);
         }
 
         // POST: Articles/Delete/5
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, ArticleViewModel model)
         {
             try
             {
-                // TODO: Add delete logic here
-
+                var article = _repo.FindById(id);
+                if (article == null)
+                {
+                    return NotFound();
+                }
+                var success = _repo.Delete(article);
+                if (!success)
+                {
+                    ModelState.AddModelError("", "Something went wrong.");
+                    return View(model);
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                ModelState.AddModelError("", "Something went wrong.");
+                return View(model);
             }
         }
     }

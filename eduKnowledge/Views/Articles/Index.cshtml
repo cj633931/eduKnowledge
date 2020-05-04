@@ -4,11 +4,8 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Articles</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -27,9 +24,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.LastEdited)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -40,19 +34,22 @@
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Author.Id)
+                @Html.DisplayFor(modelItem => item.Author.UserName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DateDrafted)
+                @item.DateDrafted.ToShortDateString()
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DatePublished)
+                @if (item.DatePublished != null)
+                {
+                    item.DatePublished.Value.ToString("MM/dd/yyyy");
+                } else
+                {
+                    @:Unpublished
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LastEdited)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
+                @item.LastEdited.ToShortDateString()
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -63,3 +60,7 @@
 }
     </tbody>
 </table>
+
+<p>
+    <a asp-action="Create" class="btn btn-dark">New Article</a>
+</p>

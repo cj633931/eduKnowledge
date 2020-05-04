@@ -19,5 +19,6 @@ namespace eduKnowledge.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TaggedArticle> TaggedArticles { get; set; }
         public DbSet<eduKnowledge.Models.ArticleViewModel> ArticleViewModel { get; set; }
+        public DbSet<eduKnowledge.Models.TagViewModel> TagViewModel { get; set; }
     }
 }
